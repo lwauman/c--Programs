@@ -1,0 +1,4 @@
+﻿  Source.cpp
+c:\users\lucas\desktop\programs\c--programs\lolhelp\proj\proj\source.cpp(31): warning C4715: 'getModuleHandle': not all control paths return a value
+  proj.vcxproj -> C:\Users\Lucas\Desktop\programs\c--Programs\lolHelp\proj\Debug\proj.exe
+  proj.vcxproj -> C:\Users\Lucas\Desktop\programs\c--Programs\lolHelp\proj\Debug\proj.pdb (Partial PDB)
