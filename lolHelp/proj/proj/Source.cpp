@@ -30,18 +30,34 @@ DWORD getModuleHandle(DWORD pid) {
 	}
 }
 
-DWORD getFinalAddress(DWORD baseAddress) {
+DWORD getFinalAddress(DWORD baseAddress, DWORD pid) {
+	int i = 0;
 	DWORD offSets[3] = { 0xBFFCD8, 0x29C, 0x168 };
+	DWORD currentAddress;
+	HANDLE pHan = getProcessHandle(pid);
+	int vAtAddr;
+
 	for (DWORD val : offSets) {
-		cout << val << endl;
+		//special case where we add to baseAddress
+		//instead of to previously calculated address
+		if (i == 0) {
+			currentAddress = (DWORD)(baseAddress + val);
+		    ReadProcessMemory(pHan, (void*)currentAddress, &vAtAddr, sizeof(vAtAddr), 0);
+			i++;
+		}
+		else {
+			currentAddress = (DWORD)(vAtAddr + val);
+			ReadProcessMemory(pHan, (void*)currentAddress, &vAtAddr, sizeof(vAtAddr), 0);
+		}
 	}
+	CloseHandle(pHan);
+	return currentAddress;
 }
 
 int main(){
 	DWORD pid;
 	HWND wHand;
-	DWORD address = 0x04A8B518;
-	DWORD toAdd1 = 0xBFFCD8;
+	DWORD address;
 	int myX;
 
 	wHand = FindWindow(NULL, gameName);
@@ -61,10 +77,8 @@ int main(){
 		}
 		else {
 			//process handle valid
-
-			address = getFinalAddress(getModuleHandle(pid));
+			address = getFinalAddress(getModuleHandle(pid), pid);
 			while (1) {
-				cin.get();
 				ReadProcessMemory(processHand, (void*)address, &myX, sizeof(myX), 0);
 				cout << myX << endl;
 				Sleep(1000);
